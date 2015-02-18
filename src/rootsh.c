@@ -60,7 +60,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #if HAVE_SYS_PARAM_H
 #  include <sys/param.h>
 #endif
-#if HAVE_FCNTL_H 
+#if HAVE_FCNTL_H
 #  include <fcntl.h>
 #endif
 #if HAVE_STROPTS_H
@@ -74,7 +74,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #endif
 
 #if NEED_GETUSERSHELL_PROTO
-/* 
+/*
 //  solaris has no own prototypes for these three functions
 */
 char *getusershell(void);
@@ -83,7 +83,7 @@ void endusershell(void);
 #endif
 
 /*
-//   our own functions 
+//   our own functions
 */
 void logSession(const int);
 void execShell(const char *, const char *);
@@ -108,83 +108,85 @@ void version(void);
 void usage(void);
 #ifdef LOGTOSYSLOG
 extern void write2syslog(const void *, size_t);
+extern char *readconf(void);
+extern int readuser(char **);
 #endif
 #ifndef HAVE_FORKPTY
 pid_t forkpty(int *, char *, struct termios *, struct winsize *);
 #endif
 char **build_scp_args( char *str, size_t reserve );
 
-/* 
-//  global variables 
+/*
+//  global variables
 //
 //
-//  environ, errno	These are imported variables. See the manpages.
+//  environ, errno      These are imported variables. See the manpages.
 //
-//  progName		The name of this executable as passed in argv[0].
+//  progName            The name of this executable as passed in argv[0].
 //
-//  sessionId		A unique identifier. It's made up of the 
-//			program's name (without a leading "-") and
-//			a 4-digit hex representation of the process id.
+//  sessionId           A unique identifier. It's made up of the
+//                      program's name (without a leading "-") and
+//                      a 4-digit hex representation of the process id.
 //
-//  sessionIdWithUid	The same identifier extended with  a colon and 
-//			the calling user's username. Used for extended
-//			logging to syslog.
+//  sessionIdWithUid    The same identifier extended with  a colon and
+//                      the calling user's username. Used for extended
+//                      logging to syslog.
 //
-//			program's name (without a leading "-") and
-//			a 4-digit hex representation of the process id.
+//                      program's name (without a leading "-") and
+//                      a 4-digit hex representation of the process id.
 //
-//  logFile		The file descriptor of the logfile.
+//  logFile             The file descriptor of the logfile.
 //
-//  logFileName		The name of the logfile, generated from userName,
-//			a timestamp and the pid. May be overwritten by
-//			userLogFileName.
+//  logFileName         The name of the logfile, generated from userName,
+//                      a timestamp and the pid. May be overwritten by
+//                      userLogFileName.
 //
-//  userLogFileName	A user supplied filename for the logfile.
+//  userLogFileName     A user supplied filename for the logfile.
 //
-//  userLogFileDir	A user supplied directory where the logfile 
-//			will be created.
+//  userLogFileDir      A user supplied directory where the logfile
+//                      will be created.
 //
-//  logInode		The inode of the logfile.
+//  logInode            The inode of the logfile.
 //
-//  logDev		The device of the logfile. These two values will
-//			be determined when the logfile will be opened
-//			and before the logfile will be closed. Should they
-//			be different, then somebody manipulated the logfile.
-//			
-//  logtofile		A flag indicating that logging to a file has 
-//			been switched off with --no-logfile.
+//  logDev              The device of the logfile. These two values will
+//                      be determined when the logfile will be opened
+//                      and before the logfile will be closed. Should they
+//                      be different, then somebody manipulated the logfile.
 //
-//  logtosyslog		A flag indicating that logging to syslog has
-//			been switched off with --no-logfile.
+//  logtofile           A flag indicating that logging to a file has
+//                      been switched off with --no-logfile.
 //
-//  userName		The name of the user who called this executable.
+//  logtosyslog         A flag indicating that logging to syslog has
+//                      been switched off with --no-logfile.
 //
-//  runAsUser		The name of the user under whose identity the shell
-//			or command will run.
+//  userName            The name of the user who called this executable.
 //
-//  standalone		A flag indicating that this program has been started
-//			without calling sudo.
+//  runAsUser           The name of the user under whose identity the shell
+//                      or command will run.
 //
-//  useLoginShell	A flag indication that the shell will be called as
-//			a login shell with "-" as first character in argv[0].
+//  standalone          A flag indicating that this program has been started
+//                      without calling sudo.
 //
-//  isaLoginShell	A flag indicating that this executable was called
-//			by the login process.
+//  useLoginShell       A flag indication that the shell will be called as
+//                      a login shell with "-" as first character in argv[0].
 //
-//  masterPty		The pty pair which will be the controlling terminal
-//			of the shell.
+//  isaLoginShell       A flag indicating that this executable was called
+//                      by the login process.
 //
-//  termParams		A structure where the terminal parameters are saved
-//			before the shell is executed. These parameters will
-//			be restored at program end.
+//  masterPty           The pty pair which will be the controlling terminal
+//                      of the shell.
 //
-//  newTty		A structure with terminal parameters which will be
-//			set as long as input/output will be sent/read to/from
-//			the pty pair.
+//  termParams          A structure where the terminal parameters are saved
+//                      before the shell is executed. These parameters will
+//                      be restored at program end.
 //
-//  winSize		The size of the calling terminal. The slave pty will
-//			be set to these values.
-//  
+//  newTty              A structure with terminal parameters which will be
+//                      set as long as input/output will be sent/read to/from
+//                      the pty pair.
+//
+//  winSize             The size of the calling terminal. The slave pty will
+//                      be set to these values.
+//
 */
 extern char **environ;
 
@@ -202,7 +204,7 @@ static char *userLogFileName;
 static char *userLogFileDir;
 #ifndef LOGTOFILE
 static int logtofile = 0;
-#else 
+#else
 static int logtofile = 1;
 #endif
 #ifndef LOGTOSYSLOG
@@ -222,19 +224,19 @@ static struct winsize winSize;
 
 int main(int argc, char **argv) {
   /*
-  //  shell		The path to the shell which will be executed.
+  //  shell             The path to the shell which will be executed.
   //
-  //  sessionIdEnv	A pointer to an environment variable assignment
-  //			ROOTSH_SESSIONID=sessionId.
+  //  sessionIdEnv      A pointer to an environment variable assignment
+  //                    ROOTSH_SESSIONID=sessionId.
   //
-  //  childPid		The pid of the process executing the shell.
-  //  
-  //  shellCommands	The commands which will be executed instead of
-  //			an interactive shell.
-  //  
-  //  c, option_index	Used by getopt_long.
+  //  childPid          The pid of the process executing the shell.
   //
-  //  long_options	Used by getopt_long.
+  //  shellCommands     The commands which will be executed instead of
+  //                    an interactive shell.
+  //
+  //  c, option_index   Used by getopt_long.
+  //
+  //  long_options      Used by getopt_long.
   */
   char *shell, *shellCommands = NULL;
   static char sessionIdEnv[sizeof(sessionId) + 17];
@@ -251,8 +253,7 @@ int main(int argc, char **argv) {
       {"no-syslog", 0, 0, 'y'},
       {0, 0, 0, 0}
   };
-
-  /* 
+  /*
   //  This should be rootsh, but it could have been renamed.
   */
   strncpy(progName, basename(argv[0]), (MAXPATHLEN - 1));
@@ -269,7 +270,7 @@ int main(int argc, char **argv) {
       break;
     }
     switch (c) {
-      case 'h':		
+      case 'h':
       case '?':
         usage();
         break;
@@ -279,11 +280,11 @@ int main(int argc, char **argv) {
       case 'c':
         /* back up 1 argument to allow consume_remaining_args to get the current arg to the -c */
         --optind;
-        
+
         /* Everything after -c should be passed directly to the execed shell
          * to be POSIX compliant */
         shellCommands = consume_remaining_args(argc, argv, shellCommands);
-	break;
+        break;
       case 'i':
         useLoginShell = 1;
         break;
@@ -307,7 +308,7 @@ int main(int argc, char **argv) {
       }
   }
 
-  snprintf(sessionId, sizeof(sessionId), "%s[%05x]", 
+  snprintf(sessionId, sizeof(sessionId), "%s[%05x]",
       *progName == '-' ? progName + 1 : progName, getpid());
   snprintf(sessionIdEnv, sizeof(sessionIdEnv), "ROOTSH_SESSIONID=%s",
       sessionId);
@@ -326,7 +327,7 @@ int main(int argc, char **argv) {
   if (! setupusermode()) {
     exit(EXIT_FAILURE);
   }
-  
+
   if ((shell = setupshell()) == NULL) {
     exit(EXIT_FAILURE);
   }
@@ -336,7 +337,7 @@ int main(int argc, char **argv) {
   }
 
   if(isatty(0)) {
-    /* 
+    /*
     //  Save original terminal parameters.
     */
     tcgetattr(STDIN_FILENO, &termParams);
@@ -344,11 +345,11 @@ int main(int argc, char **argv) {
     //  Save original window size.
     */
     ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&winSize);
-  
-    /* 
-    //  fork a child process, create a pty pair, 
+
+    /*
+    //  fork a child process, create a pty pair,
     //  make the slave the controlling terminal,
-    //  create a new session, become session leader 
+    //  create a new session, become session leader
     //  and attach filedescriptors 0-2 to the slave pty.
     */
     if ((childPid = forkpty(&masterPty, NULL, &termParams, &winSize)) < 0) {
@@ -376,20 +377,20 @@ int main(int argc, char **argv) {
 
 void logSession(const int childPid) {
   /*
-  //  readmask		A set of filedescriptors to watch. Here we have
-  //			the stdin of the calling terminal and the stdout.
-  //  
-  //  n			Either the filedescriptor which changed state in
-  //			the event loop or a simple counter.
-  //  buf		A buffer used for various red/write operations.
-  //  
-  //  
+  //  readmask          A set of filedescriptors to watch. Here we have
+  //                    the stdin of the calling terminal and the stdout.
+  //
+  //  n                 Either the filedescriptor which changed state in
+  //                    the event loop or a simple counter.
+  //  buf               A buffer used for various red/write operations.
+  //
+  //
   */
   int n;
   fd_set readmask;
   char buf[BUFSIZ];
 
-  /* 
+  /*
   //  Handle these signals (posix functions preferred).
   */
 #if HAVE_SIGACTION
@@ -409,51 +410,51 @@ void logSession(const int childPid) {
   sigwinch_received = 0;
 
   newTty = termParams;
-  /* 
+  /*
   //  Let read not return until at least 1 byte has been received.
   */
-  newTty.c_cc[VMIN] = 1; 
+  newTty.c_cc[VMIN] = 1;
   newTty.c_cc[VTIME] = 0;
-  /* 
+  /*
   //  Don't perform output processing.
   */
   newTty.c_oflag &= ~OPOST;
-  /* 
+  /*
   //  Noncanonical input | signal characters off |echo off.
   */
   newTty.c_lflag &= ~(ICANON|ISIG|ECHO);
-  /* 
+  /*
   //  NL to CR off | don't ignore CR | CR to NL off |
-  //  Case sensitive input (not known to FreeBSD) | 
-  //  no output flow control 
+  //  Case sensitive input (not known to FreeBSD) |
+  //  no output flow control
   */
 #ifdef IUCLC
   newTty.c_iflag &= ~(INLCR|IGNCR|ICRNL|IUCLC|IXON);
 #else
   newTty.c_iflag &= ~(INLCR|IGNCR|ICRNL|IXON);
 #endif
-  /* 
+  /*
   //  Set the new tty modes.
   */
   if (tcsetattr(0, TCSANOW, &newTty) < 0) {
     perror("tcsetattr: stdin");
     exit(EXIT_FAILURE);
   }
-  
-  /* 
+
+  /*
   //  Now just sit in a loop reading from the keyboard and
-  //  writing to the pseudo-tty, and reading from the  
+  //  writing to the pseudo-tty, and reading from the
   //  pseudo-tty and writing to the screen and the logfile.
   */
   for (;;) {
-    /* 
+    /*
     //  Watch for users terminal and master pty to change status.
     */
     FD_ZERO(&readmask);
     FD_SET(masterPty, &readmask);
     FD_SET(0, &readmask);
 
-    /* 
+    /*
     //  Wait for something to read.
     */
     n = select(masterPty + 1, &readmask, (fd_set *) 0, (fd_set *) 0,
@@ -473,8 +474,8 @@ void logSession(const int childPid) {
       continue;
     }
 
-    /* 
-    //  The user typed something... 
+    /*
+    //  The user typed something...
     //  Read it and pass it on to the pseudo-tty.
     */
     if (FD_ISSET(0, &readmask)) {
@@ -483,7 +484,7 @@ void logSession(const int childPid) {
         exit(EXIT_FAILURE);
       }
       if (n == 0) {
-        /* 
+        /*
         //  The user typed end-of-file; we're done.
         */
         finish(0);
@@ -494,13 +495,13 @@ void logSession(const int childPid) {
       }
     }
 
-    /* 
-    //  There's output on the pseudo-tty... 
+    /*
+    //  There's output on the pseudo-tty...
     //  Read it and pass it on to the screen and the script file.
     //  Echo is on, so we see here also the users keystrokes.
     */
     if (FD_ISSET(masterPty, &readmask)) {
-      /* 
+      /*
       //  The process died.
       */
       if ((n = read(masterPty, buf, sizeof(buf))) <= 0) {
@@ -520,15 +521,15 @@ void logSession(const int childPid) {
 void execShell(const char *shell, const char *shellCommands) {
   /*
   //
-  //  dashShell		The basename of shell, prepended with "-".
-  //  
-  //  sucmd		The path to the su command.
+  //  dashShell         The basename of shell, prepended with "-".
+  //
+  //  sucmd             The path to the su command.
   //
   */
   char *dashShell;
   char *sucmd = SUCMD;
-  
-  /* 
+
+  /*
   //  This process will exec a shell.
   //  If rootsh was called with the -u user parameter, we will exec
   //  su user instead of a shell.
@@ -573,7 +574,7 @@ void execShell(const char *shell, const char *shellCommands) {
 
 /**
  * Consume the remaining args and append them to shellCommands.
- * 
+ *
  * @return the new value of shellCommands
  */
 char * consume_remaining_args(int argc, char **argv, char *shellCommands) {
@@ -581,7 +582,7 @@ char * consume_remaining_args(int argc, char **argv, char *shellCommands) {
     if (! shellCommands) {
       shellCommands = calloc(sizeof(char), 1);
     }
-    shellCommands = realloc(shellCommands, 
+    shellCommands = realloc(shellCommands,
                             strlen(shellCommands) + strlen(argv[optind]) + 2);
     strcat(shellCommands, argv[optind]);
     strcat(shellCommands, " ");
@@ -596,7 +597,7 @@ void handle_sig_winch(int sig) {
 
 }
 
-/* 
+/*
 //  Do some cleaning after the child exited.
 //  This is also the signal handler for SIGINT and SIGQUIT.
 //  Restore original tty modes.
@@ -605,12 +606,12 @@ void handle_sig_winch(int sig) {
 
 void finish(int sig) {
   /*
-  //  sig	Either 0 if the shell exited or the number of a
-  //		signal that was catched.
+  //  sig       Either 0 if the shell exited or the number of a
+  //            signal that was catched.
   //
-  //  msgbuf	A buffer where a variable text will be written.
+  //  msgbuf    A buffer where a variable text will be written.
   //
-  //  msglen	Counts how many characters have been written.
+  //  msglen    Counts how many characters have been written.
   //
   */
   char msgbuf[BUFSIZ];
@@ -621,7 +622,7 @@ void finish(int sig) {
       perror("tcsetattr: stdin");
     }
   }
-  if (sig == 0) { 
+  if (sig == 0) {
     msglen = snprintf(msgbuf, (sizeof(msgbuf) - 1),
         "\n*** %s session ended by user\r\n", progName);
   } else {
@@ -635,32 +636,32 @@ void finish(int sig) {
 }
 
 
-/* 
-//  Open a logfile and initialize syslog. 
+/*
+//  Open a logfile and initialize syslog.
 //  Remember the logfile's inode and device for later comparison.
 //  Send introducing lines to the logging functions.
 */
 
 int beginlogging(const char *shellCommands) {
   /*
-  //  msgbuf		A buffer where a variable text will be written.
-  //  
-  //  msglen		Counts how many characters have been written.
-  //  
-  //  defLogFileName	The name of the logfile how it will be called,
-  //			if the user did not provide his own name.
-  //			Made up from username, a timestamp and the
-  //			process id.
-  //  
-  //  now		A structure filled with the current time.
-  //  
-  //  sec, min, hour	Components of now.
-  //  
-  //  day, month, year	Components of now.
-  //  
-  //  statBuf		A buffer for the stat system call which contains
-  //			inode and device.
-  //  
+  //  msgbuf            A buffer where a variable text will be written.
+  //
+  //  msglen            Counts how many characters have been written.
+  //
+  //  defLogFileName    The name of the logfile how it will be called,
+  //                    if the user did not provide his own name.
+  //                    Made up from username, a timestamp and the
+  //                    process id.
+  //
+  //  now               A structure filled with the current time.
+  //
+  //  sec, min, hour    Components of now.
+  //
+  //  day, month, year  Components of now.
+  //
+  //  statBuf           A buffer for the stat system call which contains
+  //                    inode and device.
+  //
   */
   int msglen;
   char msgbuf[BUFSIZ];
@@ -670,6 +671,13 @@ int beginlogging(const char *shellCommands) {
   char defLogFileName[MAXPATHLEN - 7];
   int sec, min, hour, day, month, year;
 #endif
+  /* variables by me
+  */
+  char noSshEnv[]="No SSH env / from local tty";
+        int flg=1;
+        char *UserName = NULL;
+        char *Desc = NULL;
+
 #ifdef LOGTOSYSLOG
   static char sessionIdWithUid[sizeof(sessionId) + 10];
 #endif
@@ -678,16 +686,49 @@ int beginlogging(const char *shellCommands) {
     fprintf(stderr, "you cannot switch off both file and syslog logging\n");
     return (0);
   }
+/* USER NAME read
+// PURPOSE read
+// 1. Functions will be here....yes before start teminal logging
+*/
+        printf("\t\tEnter your Name\n");
+        printf("\t-------------------------------------------\n");
+        do
+        {
+                /* Pass the addresss of pointer to function */
+
+                if(flg != 1)
+                free(UserName);
+                /* The each enter key will allocate one byte so we need to free the memory before new malloc (empty string)
+                // Logic is little bit strange - Need improvemets
+                */
+                readuser(&UserName);
+                if(strlen(UserName) == 0)
+                flg=0;
+        }while (strlen(UserName) == 0); /*Continue loop untill the user enter a valid data*/
+flg=1;
+
+printf("\t\tEnter Purpose\n");
+printf("\t-------------------------------------------\n");
+        do
+        {
+                if(flg != 1)
+                free(Desc);
+                readuser(&Desc);
+                if(strlen(Desc) == 0 )
+                flg=0;
+
+
+        }while (strlen(Desc) == 0);
 
 #ifdef LOGTOFILE
   if (logtofile) {
     /*
-    //  Construct the logfile name. 
+    //  Construct the logfile name.
     //  LOGDIR/<username>.YYYY.MM.DD.HH.MI.SS.<sessionId>
     //  In standalone mode, a user may propose his own filename
-    //  When the session is over, the logfile will be renamed 
+    //  When the session is over, the logfile will be renamed
     //  to <logfile>.closed.
-    //  If we don't log to a file at all, don't mention 
+    //  If we don't log to a file at all, don't mention
     //  a filename in the syslog logs.
     */
     now = time(NULL);
@@ -697,8 +738,8 @@ int beginlogging(const char *shellCommands) {
     hour = localtime(&now)->tm_hour;
     min = localtime(&now)->tm_min;
     sec = localtime(&now)->tm_sec;
-    snprintf(defLogFileName, (sizeof(logFileName) - 1), 
-        "%s.%04d%02d%02d%02d%02d%02d.%05x", 
+    snprintf(defLogFileName, (sizeof(logFileName) - 1),
+        "%s.%04d%02d%02d%02d%02d%02d.%05x",
          userName, year,month, day, hour, min, sec, getpid());
     if (standalone) {
       if (userLogFileName && userLogFileDir) {
@@ -723,8 +764,8 @@ int beginlogging(const char *shellCommands) {
       snprintf(logFileName, (sizeof(logFileName) - 1), "%s/%s",
           LOGDIR, defLogFileName);
     }
-    /* 
-    //  Open the logfile 
+    /*
+    //  Open the logfile
     */
     if ((logFile = open(logFileName, O_RDWR|O_CREAT|O_SYNC|O_CREAT|O_APPEND,
         S_IRUSR|S_IWUSR)) == -1) {
@@ -741,23 +782,30 @@ int beginlogging(const char *shellCommands) {
     }
     logInode = statBuf.st_ino;
     logDev = statBuf.st_dev;
-    /* 
+    /*
     //  Note the start time in the log file.
     */
     msglen = snprintf(msgbuf, (sizeof(msgbuf) - 1),
-        "%s%s session opened for %s as %s on %s at %s", 
-         isaLoginShell ? "login " : "", progName, userName, 
-         runAsUser ? runAsUser : getpwuid(getuid())->pw_name, 
-         ttyname(0), ctime(&now));
+        "%s%s session opened for %s as %s on %s at %s",
+         isaLoginShell ? "login " : "", progName, userName,
+         runAsUser ? runAsUser : getpwuid(getuid())->pw_name,
+         /*ttyname(0), ctime(&now));*/
+        ttyname(0) ? ttyname(0) : "non-interactive session", ctime(&now),getenv("SSH_CLIENT") != NULL ? getenv("SSH_CLIENT"): noSshEnv);
     if(write(logFile, msgbuf, msglen) < 0) {
       perror(logFileName);
       return(0);
     }
+        msglen = snprintf(msgbuf, (sizeof(msgbuf) - 1),"\nReal User:: %s\nPurpose ::%s\n",UserName,Desc);
+            if(write(logFile, msgbuf, msglen) < 0) {
+      perror(logFileName);
+      return(0);
+    }
+
   }
 #endif
 #ifdef LOGTOSYSLOG
   if(logtosyslog) {
-    /* 
+    /*
     //  Prepare usage of syslog with sessionid as prefix.
     */
 #ifdef LOGUSERNAMETOSYSLOG
@@ -767,18 +815,18 @@ int beginlogging(const char *shellCommands) {
 #else
     openlog(sessionId, LOG_NDELAY, SYSLOGFACILITY);
 #endif
-    /* 
+    /*
     //  Note the log file name in syslog if there is one.
     */
     if (logtofile) {
-      syslog(SYSLOGFACILITY | SYSLOGPRIORITY, 
-          "%s=%s,%s: logging new %ssession (%s) to %s", 
-          userName, runAsUser ? runAsUser : getpwuid(getuid())->pw_name, 
+      syslog(SYSLOGFACILITY | SYSLOGPRIORITY,
+          "%s=%s,%s: logging new %ssession (%s) to %s",
+          userName, runAsUser ? runAsUser : getpwuid(getuid())->pw_name,
           ttyname(0), isaLoginShell ? "login " : "", sessionId, logFileName);
     } else {
-      syslog(SYSLOGFACILITY | SYSLOGPRIORITY, 
-          "%s=%s,%s: logging new %ssession (%s)", 
-          userName, runAsUser ? runAsUser : getpwuid(getuid())->pw_name, 
+      syslog(SYSLOGFACILITY | SYSLOGPRIORITY,
+          "%s=%s,%s: logging new %ssession (%s)",
+          userName, runAsUser ? runAsUser : getpwuid(getuid())->pw_name,
           ttyname(0), isaLoginShell ? "login " : "", sessionId);
     }
   }
@@ -789,7 +837,7 @@ int beginlogging(const char *shellCommands) {
                       "shell commands: %s\n", shellCommands);
     dologging(msgbuf, msglen);
   }
-  
+
   return(1);
 }
 
@@ -816,7 +864,7 @@ void dologging(char *msgbuf, int msglen) {
 }
 
 
-/* 
+/*
 //  Send a final cr-lf to flush the log.
 //  Close the logfile and syslog.
 //  Examine inode and device of the logfile to find traces of manipulation.
@@ -826,24 +874,24 @@ void dologging(char *msgbuf, int msglen) {
 
 void endlogging() {
   /*
-  //  msgbuf		A buffer where a variable text will be written.
-  //  
-  //  msglen		Counts how many characters have been written.
-  //  
-  //  closedLogFileName	After the logfile is closed, it will be renamed
-  //			to this name. Normally a ".closed" will be attached
-  //			but if inode and dev differ from their values at
-  //			opening time, ".tampered" will be attached.
-  //  
-  //  now		A structure filled with the current time.
-  //  
-  //  sec, min, hour	Components of now.
-  //  
-  //  day, month, year	Components of now.
-  //  
-  //  statBuf		A buffer for the stat system call which contains
-  //			inode and device.
-  //  
+  //  msgbuf            A buffer where a variable text will be written.
+  //
+  //  msglen            Counts how many characters have been written.
+  //
+  //  closedLogFileName After the logfile is closed, it will be renamed
+  //                    to this name. Normally a ".closed" will be attached
+  //                    but if inode and dev differ from their values at
+  //                    opening time, ".tampered" will be attached.
+  //
+  //  now               A structure filled with the current time.
+  //
+  //  sec, min, hour    Components of now.
+  //
+  //  day, month, year  Components of now.
+  //
+  //  statBuf           A buffer for the stat system call which contains
+  //                    inode and device.
+  //
   */
 #ifdef LOGTOFILE
   time_t now;
@@ -857,9 +905,9 @@ void endlogging() {
   if (logtofile) {
     now = time(NULL);
     msglen = snprintf(msgbuf, (sizeof(msgbuf) - 1),
-        "%s session closed for %s on %s at %s", 
+        "%s session closed for %s on %s at %s",
         *progName == '-' ? progName + 1 : progName,
-        userName, ttyname(0), ctime(&now)); 
+        userName, ttyname(0), ctime(&now));
     if(write(logFile, msgbuf, msglen) < 0) {
       perror("Error writing to logfile");
       return;
@@ -936,13 +984,13 @@ void endlogging() {
       snprintf(closedLogFileName, sizeof(closedLogFileName), "%s.closed",
           logFileName);
       rename(logFileName, closedLogFileName);
-    } 
+    }
   }
 #endif
 #ifdef LOGTOSYSLOG
   if (logtosyslog) {
     write2syslog("\r\n", 2);
-    syslog(SYSLOGFACILITY | SYSLOGPRIORITY, "%s,%s: closing %s session (%s)", 
+    syslog(SYSLOGFACILITY | SYSLOGPRIORITY, "%s,%s: closing %s session (%s)",
         userName, ttyname(0), progName, sessionId);
     closelog();
   }
@@ -957,11 +1005,11 @@ void endlogging() {
 
 int recoverfile(int ohandle, char *recoverFileName) {
   /*
-  //  msgbuf		A buffer where a variable text will be written.
-  //  
-  //  msglen		Counts how many characters have been written.
-  //  
-  //  fd		The file descriptor of the recover file.
+  //  msgbuf            A buffer where a variable text will be written.
+  //
+  //  msglen            Counts how many characters have been written.
+  //
+  //  fd                The file descriptor of the recover file.
   //
   */
   char msgbuf[BUFSIZ];
@@ -988,15 +1036,15 @@ int recoverfile(int ohandle, char *recoverFileName) {
 
 int forceopen(char *path) {
   /*
-  //  msgbuf		A buffer where a variable text will be written.
-  //  
-  //  msglen		Counts how many characters have been written.
-  //  
-  //  fd		The file descriptor of the file which will be
-  //			hopefully opened under all circumstances.
+  //  msgbuf            A buffer where a variable text will be written.
   //
-  //  tries		A counter for the unsuccessful attempts to open
-  //			the file. 
+  //  msglen            Counts how many characters have been written.
+  //
+  //  fd                The file descriptor of the file which will be
+  //                    hopefully opened under all circumstances.
+  //
+  //  tries             A counter for the unsuccessful attempts to open
+  //                    the file.
   */
   int tries = 0;
   int fd;
@@ -1033,24 +1081,24 @@ int forceopen(char *path) {
 
 char *setupusername() {
   /*
-  //  userName	A pointer to allocated memory containing the username.
-  //  
-  //  ttybuf	A structure containing file information about 
-  //		the controlling terminal of this process.
-  //  
+  //  userName  A pointer to allocated memory containing the username.
+  //
+  //  ttybuf    A structure containing file information about
+  //            the controlling terminal of this process.
+  //
   */
   char *userName = NULL;
   struct stat ttybuf;
   struct passwd *passwd_entry;
-    
+
   passwd_entry = getpwuid(geteuid());
   userName = passwd_entry->pw_name;
 
   if(userName == NULL) {
   /*if((userName = getlogin()) == NULL) {*/
   /*if((cuserid(userName)) == NULL) {*/
-  
-    /* 
+
+    /*
     //  HP-UX returns NULL here so we take the controlling terminal's owner.
     */
     if(ttyname(0) != NULL) {
@@ -1060,7 +1108,7 @@ char *setupusername() {
         }
       }
     } else {
-      /* 
+      /*
       //  Rootsh must be run interactively.
       */
       fprintf(stderr, "i don\'t know who you are\n");
@@ -1070,29 +1118,29 @@ char *setupusername() {
 }
 
 
-/* 
-//  Find out which shell to use. return the pathname of the shell 
+/*
+//  Find out which shell to use. return the pathname of the shell
 //  or NULL if an error occurred.
 //  If this executable has been called by login, it would also become
 //  the command interpreter for the just logged in user. This would
 //  result in a recursive invocation of rootsh. In this case we
 //  must find a replacement in form of a default command interpreter.
-*/ 
+*/
 
 char *setupshell() {
   /*
-  //  isvalid	A flag indicating a shell found in /etc/shells.
-  //  
-  //  shell	The path to the shell of the calling user.
-  //  
-  //  shellenv	A string containing "SHELL=<path_to_shell>" which will
-  //		be added to the environment.
+  //  isvalid   A flag indicating a shell found in /etc/shells.
+  //
+  //  shell     The path to the shell of the calling user.
+  //
+  //  shellenv  A string containing "SHELL=<path_to_shell>" which will
+  //            be added to the environment.
   */
   int isvalid;
   char *shell, *shellenv;
   char *validshell;
-  
-  /* 
+
+  /*
   //  Try to get the users current shell with two methods.
   */
   if ((shell = getenv("SHELL")) == NULL) {
@@ -1116,7 +1164,7 @@ char *setupshell() {
     isvalid = 1;
 #endif
 
-    /* 
+    /*
     //  Do not allow invalid shells.
     */
     if (isvalid == 0) {
@@ -1146,10 +1194,10 @@ char *setupshell() {
 
 
 /*
-//  If a username was given on the command line via -u 
+//  If a username was given on the command line via -u
 //  See, if it has an acceptable length (yes, some have 64 character usernames)
-//  See, if it exists. 
-//  get the uid. 
+//  See, if it exists.
+//  get the uid.
 //  Clean up the environment.
 //  If not, forget this and run as root.
 */
@@ -1185,10 +1233,10 @@ int setupusermode(void) {
 
 char *defaultshell(void) {
   /*
-  //  defaultshell	A static memory area containing the path of the 
-  //			default shell to use.
+  //  defaultshell      A static memory area containing the path of the
+  //                    default shell to use.
   */
-  char *defaultshell = DEFAULTSHELL;
+  char *defaultshell = readconf();
   if (strlen(defaultshell) > 0) {
     return defaultshell;
   } else {
@@ -1210,12 +1258,12 @@ char *defaultshell(void) {
 
 char **saveenv(char *name) {
   /*
-  //  senv	A pointer to a static area holding the saved
-  //		environment variables. It's an equivalent to
-  //		the **environ pointer.
-  //  
-  //  senvp	A pointer to the last entry in senv.
-  //  
+  //  senv      A pointer to a static area holding the saved
+  //            environment variables. It's an equivalent to
+  //            the **environ pointer.
+  //
+  //  senvp     A pointer to the last entry in senv.
+  //
   */
   static char **senv = NULL;
   static char **senvp;
@@ -1243,7 +1291,7 @@ char **saveenv(char *name) {
       //  Now position senvp to the closing null pointer or to an
       //  already existing name=value entry.
       */
-      while (*senvp != NULL && 
+      while (*senvp != NULL &&
           strncmp(*senvp, name, strchr(*senvp, '=') - *senvp)) {
         senvp++;
       }
@@ -1268,7 +1316,7 @@ char **saveenv(char *name) {
 
 void restoreenv(void) {
   /*
-  //  senv	A pointer to the saved environment.
+  //  senv      A pointer to the saved environment.
   */
   char **senv;
   senv = saveenv(NULL);
@@ -1295,7 +1343,7 @@ int clearenv(void) {
 
 
 #ifndef HAVE_FORKPTY
-/* 
+/*
 //  Emulation of the BSD function forkpty.
 */
 #ifndef MASTERPTYDEV
@@ -1303,32 +1351,32 @@ int clearenv(void) {
 #endif
 pid_t forkpty(int *amaster,  char  *name,  struct  termios *termp, struct winsize *winp) {
   /*
-  //  amaster		A pointer to the master pty's file descriptor which
-  //			will be set here.
-  //  
-  //  name		If name is NULL, the name of the slave pty will be
-  //			returned in name.
-  //  
-  //  termp		If termp is not NULL, the ter minal parameters
-  //			of the slave will be set to the values in termp.
-  //  
-  //  winsize		If winp is not NULL, the window size of the  slave
-  //			will be set to the values in winp.
-  //  
-  //  currentterm	A structure filled with the characteristics of
-  //			the current controlling terminal.
-  //  
-  //  currentwinsize	A structure filled with size characteristics of
-  //			the current controlling terminal.
-  //  
-  //  pid		The process id of the forked child process.
-  //  
-  //  master		The file descriptor of the master pty.
-  //  
-  //  slave		The file descriptor of the slave pty.
-  //  
-  //  slavename		The file name of the slave pty.
-  //  
+  //  amaster           A pointer to the master pty's file descriptor which
+  //                    will be set here.
+  //
+  //  name              If name is NULL, the name of the slave pty will be
+  //                    returned in name.
+  //
+  //  termp             If termp is not NULL, the ter minal parameters
+  //                    of the slave will be set to the values in termp.
+  //
+  //  winsize           If winp is not NULL, the window size of the  slave
+  //                    will be set to the values in winp.
+  //
+  //  currentterm       A structure filled with the characteristics of
+  //                    the current controlling terminal.
+  //
+  //  currentwinsize    A structure filled with size characteristics of
+  //                    the current controlling terminal.
+  //
+  //  pid               The process id of the forked child process.
+  //
+  //  master            The file descriptor of the master pty.
+  //
+  //  slave             The file descriptor of the slave pty.
+  //
+  //  slavename         The file name of the slave pty.
+  //
   */
   struct termios currentterm;
   struct winsize currentwinsize;
@@ -1336,7 +1384,7 @@ pid_t forkpty(int *amaster,  char  *name,  struct  termios *termp, struct winsiz
   int master, slave;
   char *slavename;
 
-  /* 
+  /*
   //  Get current settings if termp was not provided by the caller.
   */
   if (termp == NULL) {
@@ -1344,7 +1392,7 @@ pid_t forkpty(int *amaster,  char  *name,  struct  termios *termp, struct winsiz
     termp = &currentterm;
   }
 
-  /* 
+  /*
   //  Same for window size.
   */
   if (winp == NULL) {
@@ -1409,7 +1457,7 @@ pid_t forkpty(int *amaster,  char  *name,  struct  termios *termp, struct winsiz
       return(-1);
     }
 
-    /* 
+    /*
     //  Open the slave pseudo tty.
     */
     if ((slave = open(slavename, O_RDWR)) < 0) {
@@ -1495,12 +1543,12 @@ pid_t forkpty(int *amaster,  char  *name,  struct  termios *termp, struct winsiz
     //  If the caller wants it, give him back the slave pty's name.
     */
     if (name != NULL) strcpy(name, slavename);
-    return(0); 
+    return(0);
   } else {
     /*
     //  Return the slave pty device name if caller wishes so.
     */
-    if (name != NULL) {          
+    if (name != NULL) {
       if ((slavename = ptsname(master)) == NULL) {
         perror("ptsname");
         close(master);
@@ -1512,8 +1560,8 @@ pid_t forkpty(int *amaster,  char  *name,  struct  termios *termp, struct winsiz
     //  Return the file descriptor for communicating with the process
     //  to the caller.
     */
-    *amaster = master; 
-    return(pid);      
+    *amaster = master;
+    return(pid);
   }
 }
 #endif
@@ -1529,29 +1577,29 @@ char **build_scp_args( char *str, size_t reserve ) {
     case WRDE_BADCHAR:
     case WRDE_CMDSUB:
       fprintf(stderr, "%s: bad characters in arguments\n",
-	      progName);
+              progName);
       break;
     case WRDE_NOSPACE:
       fprintf(stderr, "%s: wordexp() allocation failed\n",
-	      progName);
+              progName);
       break;
     case WRDE_BADVAL:
       fprintf(stderr, "%s: wordexp() bad value\n",
-	      progName);
+              progName);
       break;
     case WRDE_SYNTAX:
       fprintf(stderr, "%s: wordexp() bad syntax\n",
-	      progName);
+              progName);
       break;
 #ifdef WRDE_NOSYS
     case WRDE_NOSYS:
       fprintf(stderr, "%s: wordexp() not supported\n",
-	      progName);
+              progName);
       break;
 #endif
     default:
       fprintf(stderr, "%s: error expanding arguments\n",
-	      progName);
+              progName);
     }
     exit(1);
   }
